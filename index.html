@@ -13,11 +13,8 @@ body {
   background: #ffffff; color: #1a1a1a;
   min-height: 100vh; min-height: 100dvh;
   display: flex; flex-direction: column;
-  overflow: hidden;
-  -webkit-text-size-adjust: 100%;
+  overflow: hidden; -webkit-text-size-adjust: 100%;
 }
-
-/* KEY SCREEN */
 .key-screen {
   position: fixed; inset: 0; background: #fff;
   display: flex; align-items: center; justify-content: center;
@@ -25,162 +22,58 @@ body {
 }
 .key-box { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 14px; }
 .key-logo { font-size: 24px; font-weight: 600; }
-.key-logo span { color: #000; background: #000; color: #fff; padding: 2px 8px; border-radius: 6px; margin-left: 4px; font-size: 20px; }
+.key-logo span { background: #1a1a1a; color: #fff; padding: 2px 8px; border-radius: 6px; margin-left: 4px; font-size: 20px; }
 .key-sub { font-size: 14px; color: #888; line-height: 1.6; }
-.key-input {
-  width: 100%; padding: 13px 15px;
-  border: 1.5px solid #ddd; border-radius: 12px;
-  font-size: 14px; font-family: 'Outfit', sans-serif;
-  color: #1a1a1a; outline: none;
-}
+.key-input { width: 100%; padding: 13px 15px; border: 1.5px solid #ddd; border-radius: 12px; font-size: 14px; font-family: 'Outfit', sans-serif; color: #1a1a1a; outline: none; }
 .key-input:focus { border-color: #1a1a1a; }
 .key-link { font-size: 12px; color: #aaa; }
 .key-link a { color: #1a1a1a; text-decoration: none; font-weight: 500; }
 .key-err { font-size: 12px; color: #dc2626; display: none; }
 .key-err.show { display: block; }
-.key-btn {
-  padding: 14px; border-radius: 12px;
-  background: #1a1a1a; border: none;
-  color: #fff; font-size: 15px; font-weight: 600;
-  font-family: 'Outfit', sans-serif; cursor: pointer;
-  touch-action: manipulation;
-}
+.key-btn { padding: 14px; border-radius: 12px; background: #1a1a1a; border: none; color: #fff; font-size: 15px; font-weight: 600; font-family: 'Outfit', sans-serif; cursor: pointer; touch-action: manipulation; }
 .key-btn:active { background: #333; }
 
-/* TOP BAR */
-.topbar {
-  padding: 12px 16px 4px;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-shrink: 0;
-}
-.logo { font-size: 17px; font-weight: 600; color: #1a1a1a; }
+.topbar { padding: 12px 16px 4px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.logo { font-size: 17px; font-weight: 600; }
 .logo span { background: #1a1a1a; color: #fff; padding: 1px 6px; border-radius: 5px; font-size: 14px; margin-left: 2px; }
 .topright { display: flex; gap: 7px; align-items: center; }
-.chip {
-  font-size: 11px; font-weight: 500;
-  padding: 3px 11px; border-radius: 20px;
-  border: 1px solid #ddd; background: #fafafa; color: #666;
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
-.end-btn {
-  font-size: 11px; font-weight: 500;
-  padding: 5px 13px; border-radius: 20px;
-  border: 1px solid #fcd34d; background: #fffbeb; color: #b45309;
-  cursor: pointer; -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
+.chip { font-size: 11px; font-weight: 500; padding: 3px 11px; border-radius: 20px; border: 1px solid #ddd; background: #fafafa; color: #666; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.end-btn { font-size: 11px; font-weight: 500; padding: 5px 13px; border-radius: 20px; border: 1px solid #fcd34d; background: #fffbeb; color: #b45309; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 
-/* CHAT */
-.chat {
-  flex: 1; overflow-y: auto;
-  padding: 12px 16px 8px;
-  display: flex; flex-direction: column; gap: 10px;
-  -webkit-overflow-scrolling: touch;
-}
-.msg {
-  max-width: 82%; font-size: 15px;
-  line-height: 1.65; padding: 11px 15px;
-  border-radius: 18px; word-break: break-word;
-  animation: pop 0.18s ease;
-}
-@keyframes pop {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.msg.ai {
-  background: #f2f2f2; color: #1a1a1a;
-  align-self: flex-start;
-  border-radius: 4px 18px 18px 18px;
-}
-.msg.you {
-  background: #1a1a1a; color: #fff;
-  align-self: flex-end;
-  border-radius: 18px 4px 18px 18px;
-}
-.msg.correction {
-  align-self: flex-start;
-  background: #fff5f5; border: 1px solid #fca5a5;
-  border-radius: 12px; font-size: 13px; color: #444; max-width: 85%;
-}
+.chat { flex: 1; overflow-y: auto; padding: 12px 16px 8px; display: flex; flex-direction: column; gap: 10px; -webkit-overflow-scrolling: touch; }
+.msg { max-width: 82%; font-size: 15px; line-height: 1.65; padding: 11px 15px; border-radius: 18px; word-break: break-word; animation: pop 0.18s ease; }
+@keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.msg.ai { background: #f2f2f2; color: #1a1a1a; align-self: flex-start; border-radius: 4px 18px 18px 18px; }
+.msg.you { background: #1a1a1a; color: #fff; align-self: flex-end; border-radius: 18px 4px 18px 18px; }
+.msg.correction { align-self: flex-start; background: #fff5f5; border: 1px solid #fca5a5; border-radius: 12px; font-size: 13px; color: #444; max-width: 85%; }
 .corr-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #dc2626; margin-bottom: 4px; }
 .corr-old { color: #dc2626; text-decoration: line-through; }
 .corr-new { color: #16a34a; font-weight: 500; }
 .corr-why { color: #666; font-size: 12px; margin-top: 3px; }
 
-.typing {
-  align-self: flex-start;
-  background: #f2f2f2; border-radius: 4px 18px 18px 18px;
-  padding: 12px 16px; display: flex; gap: 5px; align-items: center;
-}
+.typing { align-self: flex-start; background: #f2f2f2; border-radius: 4px 18px 18px 18px; padding: 12px 16px; display: flex; gap: 5px; align-items: center; }
 .dot { width: 7px; height: 7px; border-radius: 50%; background: #aaa; animation: blink 1.2s infinite; }
 .dot:nth-child(2) { animation-delay: 0.2s; }
 .dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes blink {
-  0%,60%,100% { opacity: 0.3; }
-  30% { opacity: 1; }
-}
+@keyframes blink { 0%,60%,100% { opacity: 0.3; } 30% { opacity: 1; } }
 
-/* MIC AREA */
-.bottom {
-  background: #fff; border-top: 1px solid #ececec;
-  padding: 16px 16px max(20px, env(safe-area-inset-bottom));
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  flex-shrink: 0;
-}
-.transcript {
-  font-size: 13px; color: #bbb; font-style: italic;
-  text-align: center; min-height: 16px; max-width: 300px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.mic-outer {
-  position: relative; width: 84px; height: 84px;
-  display: flex; align-items: center; justify-content: center;
-}
-.ring {
-  position: absolute; inset: 0; border-radius: 50%;
-  border: 2px solid rgba(26,26,26,0.15); pointer-events: none;
-}
+.bottom { background: #fff; border-top: 1px solid #ececec; padding: 16px 16px max(20px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: center; gap: 10px; flex-shrink: 0; }
+.transcript { font-size: 13px; color: #bbb; font-style: italic; text-align: center; min-height: 16px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mic-outer { position: relative; width: 84px; height: 84px; display: flex; align-items: center; justify-content: center; }
+.ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(26,26,26,0.15); pointer-events: none; }
 .recording .ring.a { animation: ripple 1.3s ease-out infinite; }
 .recording .ring.b { animation: ripple 1.3s ease-out 0.45s infinite; }
-@keyframes ripple {
-  0%   { transform: scale(1);   opacity: 0.7; }
-  100% { transform: scale(1.9); opacity: 0; }
-}
-.mic-btn {
-  width: 70px; height: 70px; border-radius: 50%;
-  background: #1a1a1a; border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
-  transition: transform 0.1s, background 0.15s;
-  position: relative; z-index: 1;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none; -webkit-user-select: none;
-}
+@keyframes ripple { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.9); opacity: 0; } }
+.mic-btn { width: 70px; height: 70px; border-radius: 50%; background: #1a1a1a; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 24px rgba(0,0,0,0.2); transition: transform 0.1s, background 0.15s; position: relative; z-index: 1; touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
 .mic-btn:active { transform: scale(0.93); }
 .mic-btn.rec { background: #dc2626; box-shadow: 0 6px 24px rgba(220,38,38,0.35); }
-.status-text {
-  font-size: 13px; color: #999; font-weight: 500;
-  text-align: center; min-height: 18px;
-}
+.status-text { font-size: 13px; color: #999; font-weight: 500; text-align: center; min-height: 18px; }
 .status-text.listening { color: #dc2626; }
-.status-text.thinking  { color: #555; }
+.status-text.thinking { color: #555; }
 
-/* MODAL */
-.overlay {
-  position: fixed; inset: 0; z-index: 999;
-  background: rgba(0,0,0,0.5);
-  display: none; align-items: flex-end; justify-content: center;
-}
+.overlay { position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; }
 .overlay.on { display: flex; }
-.sheet {
-  background: #fff; border-radius: 20px 20px 0 0;
-  width: 100%; max-width: 560px;
-  max-height: 85vh; overflow-y: auto;
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
-  animation: sheetUp 0.28s cubic-bezier(0.32,0.72,0,1);
-}
+.sheet { background: #fff; border-radius: 20px 20px 0 0; width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto; padding-bottom: max(16px, env(safe-area-inset-bottom)); animation: sheetUp 0.28s cubic-bezier(0.32,0.72,0,1); }
 @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .sheet-top { padding: 24px 20px 16px; text-align: center; border-bottom: 1px solid #eee; }
 .sheet-emoji { font-size: 34px; display: block; margin-bottom: 8px; }
@@ -203,19 +96,17 @@ body {
 </head>
 <body>
 
-<!-- API KEY SCREEN -->
 <div class="key-screen" id="key-screen">
   <div class="key-box">
     <div class="key-logo">SpeakUp <span>Grok</span></div>
-    <div class="key-sub">输入你的 xAI API Key 开始练习。<br>Key 只保存在你的浏览器里，不会上传。</div>
+    <div class="key-sub">输入你的 xAI API Key。Key 只保存在浏览器里。</div>
     <input class="key-input" id="key-input" type="password" placeholder="xai-..." />
-    <div class="key-err" id="key-err">Key 格式不对，应该以 xai- 开头。</div>
-    <div class="key-link">在 <a href="https://console.x.ai" target="_blank">console.x.ai</a> 获取你的 Key</div>
+    <div class="key-err" id="key-err">Key 应该以 xai- 开头，请检查后重试。</div>
+    <div class="key-link">获取 Key → <a href="https://console.x.ai" target="_blank">console.x.ai</a></div>
     <button class="key-btn" onclick="startApp()">开始练习 →</button>
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div class="topbar">
   <div class="logo">SpeakUp <span>Grok</span></div>
   <div class="topright">
@@ -247,7 +138,6 @@ body {
   <div class="status-text" id="status">Tap to speak</div>
 </div>
 
-<!-- FEEDBACK MODAL -->
 <div class="overlay" id="overlay">
   <div class="sheet">
     <div class="sheet-top">
@@ -271,15 +161,14 @@ body {
 <script>
 const TOPICS = ["Daily Life","Travel","Business","Food","Technology","Culture"];
 const LEVELS = ["Beginner","Intermediate","Advanced"];
-const MODEL  = "grok-3-mini";   // or "grok-3" for smarter but slower
+// grok-3-mini-fast = fastest, grok-3-mini = balanced, grok-3 = smartest
+const MODEL = "grok-3-mini-fast";
 
-let apiKey = '';
-let history = [], topic = "Daily Life", level = "Intermediate";
+let apiKey = '', history = [], topic = "Daily Life", level = "Intermediate";
 let turns = 0, corrections = 0, busy = false;
 let recognition = null, isRecording = false;
 let synth = window.speechSynthesis;
 
-// ── Key screen ──
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('xai_key');
   if (saved) { apiKey = saved; document.getElementById('key-screen').style.display = 'none'; init(); }
@@ -288,27 +177,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function startApp() {
   const key = document.getElementById('key-input').value.trim();
-  if (!key.startsWith('xai-')) {
-    document.getElementById('key-err').classList.add('show'); return;
-  }
+  if (!key.startsWith('xai-')) { document.getElementById('key-err').classList.add('show'); return; }
   apiKey = key;
   localStorage.setItem('xai_key', key);
   document.getElementById('key-screen').style.display = 'none';
   init();
 }
 
-// ── Settings ──
 function cycleLevel() { level = LEVELS[(LEVELS.indexOf(level)+1)%LEVELS.length]; document.getElementById('chip-level').textContent = level; }
 function cycleTopic() { topic = TOPICS[(TOPICS.indexOf(topic)+1)%TOPICS.length]; document.getElementById('chip-topic').textContent = topic; }
 
-// ── Status ──
 function setStatus(txt, cls) {
   const el = document.getElementById('status');
   el.textContent = txt;
   el.className = 'status-text' + (cls ? ' '+cls : '');
 }
 
-// ── Mic ──
 let touchHandled = false;
 function onMicTouch(e) { e.preventDefault(); touchHandled = true; handleMic(); setTimeout(() => { touchHandled = false; }, 400); }
 function onMicClick() { if (touchHandled) return; handleMic(); }
@@ -353,37 +237,27 @@ function stopRec(manual) {
   }
 }
 
-// ── Grok API (OpenAI-compatible) ──
+// ── Grok API — short system prompt for speed ──
 function sysPrompt() {
-  return `You are a warm, encouraging English speaking coach. Have a natural spoken conversation about "${topic}" with a ${level}-level English learner whose native language is Chinese.
-
-Rules:
-- Reply in 1-3 short spoken sentences. This is voice — keep it natural and brief.
-- Gently correct at most ONE clear grammar or vocabulary error per turn.
-- Always end with a follow-up question to keep conversation going.
-
-Respond ONLY in this exact JSON format (no markdown):
-{"reply":"your spoken response","hasCorrection":true,"correction":{"original":"wrong phrase","fixed":"correct version","why":"brief friendly reason"},"scores":{"grammar":85,"vocab":80,"fluency":75}}
-
-If no correction needed:
-{"reply":"your response","hasCorrection":false,"correction":null,"scores":{"grammar":90,"vocab":85,"fluency":80}}`;
+  return `English speaking coach. Topic: ${topic}. Level: ${level}. Learner is Chinese.
+Reply 1-2 sentences max. Correct max 1 error gently. End with a question.
+Reply ONLY as JSON: {"reply":"...","hasCorrection":false,"correction":null,"scores":{"grammar":80,"vocab":75,"fluency":70}}
+With correction: {"reply":"...","hasCorrection":true,"correction":{"original":"...","fixed":"...","why":"..."},"scores":{"grammar":80,"vocab":75,"fluency":70}}`;
 }
 
 function feedbackSys() {
   const msgs = history.filter(m=>m.role==='user').map(m=>m.content).join('\n');
-  return `Analyze this English speaking practice session.\n\nUser said:\n${msgs}\n\nStats: ${turns} turns, ${corrections} corrections, level: ${level}, topic: ${topic}\n\nRespond ONLY as valid JSON:\n{"grammar":85,"vocab":80,"fluency":75,"summary":"2 warm encouraging sentences","strengths":["point 1","point 2"],"improve":["area 1"],"next":["step 1","step 2"]}`;
+  return `Rate this English practice. User: ${level}, Topic: ${topic}, Turns: ${turns}.\nSaid:\n${msgs}\nJSON only: {"grammar":80,"vocab":75,"fluency":70,"summary":"2 sentences","strengths":["...","..."],"improve":["..."],"next":["...","..."]}`;
 }
 
 async function callGrok(messages, system) {
   const r = await fetch("https://api.x.ai/v1/chat/completions", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`
-    },
+    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
     body: JSON.stringify({
       model: MODEL,
-      max_tokens: 500,
+      max_tokens: 250,  // reduced for speed
+      temperature: 0.7,
       messages: [{ role: "system", content: system }, ...messages]
     })
   });
@@ -394,7 +268,6 @@ async function callGrok(messages, system) {
 
 function parseJ(t) { try { return JSON.parse(t.replace(/```json|```/g,'').trim()); } catch { return null; } }
 
-// ── TTS (browser) ──
 function speak(text) {
   if (!synth) return;
   synth.cancel();
@@ -412,7 +285,6 @@ function speak(text) {
   setTimeout(() => setStatus('Tap to speak'), 8000);
 }
 
-// ── DOM ──
 function addMsg(cls, html) {
   const el = document.createElement('div');
   el.className = 'msg ' + cls; el.innerHTML = html;
@@ -428,7 +300,6 @@ function addTyping() {
 }
 function removeTyping() { document.getElementById('typing')?.remove(); }
 
-// ── Send ──
 async function sendToAI(text) {
   if (!text || busy) return;
   busy = true; setStatus('Thinking…', 'thinking');
@@ -460,36 +331,34 @@ async function sendToAI(text) {
     }
   } catch(e) {
     removeTyping();
-    addMsg('ai', "Connection issue — please check your API key.");
+    addMsg('ai', "Connection issue — check your API key.");
     setStatus('Tap to speak');
   }
   busy = false;
 }
 
-// ── Init ──
 async function init() {
   busy = true; setStatus('Loading…', 'thinking'); addTyping();
   try {
     const raw = await callGrok(
-      [{role:'user', content:`Greet me warmly and ask ONE simple question about "${topic}". Short & natural spoken sentence. JSON only: {"reply":"...","hasCorrection":false,"correction":null,"scores":null}`}],
+      [{role:'user', content:`Greet and ask 1 question about ${topic}. JSON: {"reply":"...","hasCorrection":false,"correction":null,"scores":null}`}],
       sysPrompt()
     );
     const p = parseJ(raw);
     removeTyping();
-    const msg = p?.reply || `Hi! Let's practice English. What do you want to talk about today?`;
+    const msg = p?.reply || `Hi! Let's practice English. What's on your mind?`;
     addMsg('ai', msg);
     if (p?.reply) history.push({role:'assistant', content:p.reply});
     setStatus('Speaking…', 'thinking');
     speak(msg);
   } catch(e) {
     removeTyping();
-    addMsg('ai', "Please check your API key and try again.");
+    addMsg('ai', "Check your API key and try again.");
     setStatus('Tap to speak');
   }
   busy = false;
 }
 
-// ── Feedback ──
 async function endSession() {
   if (turns === 0) { alert('Have a conversation first 😊'); return; }
   synth?.cancel();
@@ -498,7 +367,7 @@ async function endSession() {
   document.getElementById('sheet-body').innerHTML = '';
   ['sc-g','sc-v','sc-f'].forEach(id => document.getElementById(id).textContent = '…');
   try {
-    const raw = await callGrok([{role:'user', content:'Give me the feedback report.'}], feedbackSys());
+    const raw = await callGrok([{role:'user', content:'Feedback.'}], feedbackSys());
     const fb = parseJ(raw);
     if (fb) {
       document.getElementById('sc-g').textContent = fb.grammar;
