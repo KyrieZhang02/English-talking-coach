@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SpeakUp</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  height: 100%;
+  background: #ffffff;
+  color-scheme: light only;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #ffffff;
+  color: #1a1a1a;
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* TOP: chat messages */
+.chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.msg {
+  max-width: 80%;
+  font-size: 15px;
+  line-height: 1.65;
+  padding: 11px 15px;
+  border-radius: 18px;
+  word-break: break-word;
+  animation: pop 0.18s ease;
+}
+@keyframes pop {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.msg.ai {
+  background: #f2f2f2;
+  color: #1a1a1a;
+  align-self: flex-start;
+  border-radius: 4px 18px 18px 18px;
+}
+.msg.you {
+  background: #2563eb;
+  color: #fff;
+  align-self: flex-end;
+  border-radius: 18px 4px 18px 18px;
+}
+.msg.correction {
+  align-self: flex-start;
+  background: #fff0f0;
+  border: 1px solid #fca5a5;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #444;
+  max-width: 85%;
+}
+.corr-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #dc2626; margin-bottom: 4px; }
+.corr-old { color: #dc2626; text-decoration: line-through; }
+.corr-new { color: #16a34a; font-weight: 500; }
+.corr-why { color: #666; font-size: 12px; margin-top: 3px; }
+
+.typing {
+  align-self: flex-start;
+  background: #f2f2f2;
+  border-radius: 4px 18px 18px 18px;
+  padding: 12px 16px;
+  display: flex; gap: 5px; align-items: center;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; background: #aaa; animation: blink 1.2s infinite; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink {
+  0%,60%,100% { opacity: 0.3; }
+  30% { opacity: 1; }
+}
+
+/* BOTTOM: mic area — NOT fixed, part of flex column */
+.bottom {
+  background: #ffffff;
+  border-top: 1px solid #ececec;
+  padding: 20px 16px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.status-text {
+  font-size: 13px;
+  color: #999;
+  font-weight: 500;
+  min-height: 18px;
+  text-align: center;
+}
+.status-text.listening { color: #dc2626; }
+.status-text.thinking  { color: #2563eb; }
+
+/* The mic button itself — no fixed positioning */
+.mic-outer {
+  position: relative;
+  width: 88px; height: 88px;
+  display: flex; align-items: center; justify-content: center;
+}
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(37,99,235,0.2);
+  pointer-events: none;
+}
+.ring.a { animation: none; }
+.ring.b { animation: none; }
+.recording .ring.a { animation: ripple 1.3s ease-out infinite; }
+.recording .ring.b { animation: ripple 1.3s ease-out 0.45s infinite; }
+@keyframes ripple {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+.mic-btn {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: #2563eb;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 24px rgba(37,99,235,0.35);
+  transition: transform 0.1s, background 0.15s;
+  position: relative;
+  z-index: 1;
+  /* important: make touch work */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.mic-btn:active, .mic-btn.pressed { transform: scale(0.93); }
+.mic-btn.rec { background: #dc2626; box-shadow: 0 6px 24px rgba(220,38,38,0.35); }
+
+/* transcript flash */
+.transcript {
+  font-size: 13px; color: #bbb; font-style: italic;
+  text-align: center; min-height: 16px;
+  max-width: 300px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* top bar */
+.topbar {
+  padding: 14px 16px 4px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.logo { font-size: 17px; font-weight: 600; color: #1a1a1a; }
+.logo span { color: #2563eb; }
+.topright { display: flex; gap: 7px; align-items: center; }
+.chip {
+  font-size: 11px; font-weight: 500;
+  padding: 3px 11px; border-radius: 20px;
+  border: 1px solid #ddd; background: #fafafa; color: #666;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.end-btn {
+  font-size: 11px; font-weight: 500;
+  padding: 5px 13px; border-radius: 20px;
+  border: 1px solid #fcd34d; background: #fffbeb; color: #b45309;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* MODAL */
+.overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,0.5);
+  display: none; align-items: flex-end; justify-content: center;
+}
+.overlay.on { display: flex; }
+.sheet {
+  background: #fff; border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 560px;
+  max-height: 85vh; overflow-y: auto;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  animation: up 0.28s cubic-bezier(0.32,0.72,0,1);
+}
+@keyframes up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.sheet-top { padding: 24px 20px 16px; text-align: center; border-bottom: 1px solid #eee; }
+.sheet-emoji { font-size: 34px; display: block; margin-bottom: 8px; }
+.sheet-title { font-size: 20px; font-weight: 600; margin-bottom: 5px; }
+.sheet-sum { font-size: 13px; color: #666; line-height: 1.65; }
+.scores { display: flex; border-bottom: 1px solid #eee; }
+.sc { flex: 1; padding: 14px 8px; text-align: center; border-right: 1px solid #eee; }
+.sc:last-child { border-right: none; }
+.sc-n { font-size: 26px; font-weight: 600; margin-bottom: 3px; }
+.sc-l { font-size: 10px; color: #aaa; }
+.sheet-body { padding: 16px 20px 8px; display: flex; flex-direction: column; gap: 14px; }
+.sec-title { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #bbb; margin-bottom: 6px; }
+.fb { display: flex; gap: 8px; font-size: 13px; line-height: 1.6; color: #555; padding: 8px 11px; background: #f8f8f8; border-radius: 9px; margin-bottom: 4px; }
+.fbd { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+.sheet-btns { padding: 12px 20px 20px; display: flex; gap: 8px; }
+.btn-p { flex: 1; padding: 12px; border-radius: 11px; background: #2563eb; border: none; color: #fff; font-size: 14px; font-weight: 500; font-family: 'Outfit', sans-serif; cursor: pointer; touch-action: manipulation; }
+.btn-s { padding: 12px 16px; border-radius: 11px; background: #f5f5f5; border: none; color: #555; font-size: 14px; font-family: 'Outfit', sans-serif; cursor: pointer; touch-action: manipulation; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Speak<span>Up</span></div>
+  <div class="topright">
+    <div class="chip" id="chip-level" onclick="cycleLevel()">Intermediate</div>
+    <div class="chip" id="chip-topic" onclick="cycleTopic()">Daily Life</div>
+    <button class="end-btn" onclick="endSession()">Feedback</button>
+  </div>
+</div>
+
+<div class="chat" id="chat"></div>
+
+<div class="bottom">
+  <div class="transcript" id="transcript"></div>
+  <div class="mic-outer" id="mic-outer">
+    <div class="ring a"></div>
+    <div class="ring b"></div>
+    <button class="mic-btn" id="mic-btn" ontouchstart="onMicTouch(event)" onclick="onMicClick()">
+      <svg id="icon-mic" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="2" width="6" height="11" rx="3"/>
+        <path d="M5 10a7 7 0 0 0 14 0"/>
+        <line x1="12" y1="19" x2="12" y2="22"/>
+        <line x1="8" y1="22" x2="16" y2="22"/>
+      </svg>
+      <svg id="icon-stop" width="28" height="28" viewBox="0 0 24 24" fill="white" style="display:none">
+        <rect x="6" y="6" width="12" height="12" rx="2"/>
+      </svg>
+    </button>
+  </div>
+  <div class="status-text" id="status">Tap to speak</div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="sheet">
+    <div class="sheet-top">
+      <span class="sheet-emoji">✨</span>
+      <div class="sheet-title">Session Complete</div>
+      <div class="sheet-sum" id="sheet-sum">Generating feedback…</div>
+    </div>
+    <div class="scores">
+      <div class="sc"><div class="sc-n" id="sc-g" style="color:#16a34a">—</div><div class="sc-l">Grammar</div></div>
+      <div class="sc"><div class="sc-n" id="sc-v" style="color:#2563eb">—</div><div class="sc-l">Vocabulary</div></div>
+      <div class="sc"><div class="sc-n" id="sc-f" style="color:#d97706">—</div><div class="sc-l">Fluency</div></div>
+    </div>
+    <div class="sheet-body" id="sheet-body"></div>
+    <div class="sheet-btns">
+      <button class="btn-s" onclick="closeModal()">Close</button>
+      <button class="btn-p" onclick="newSession()">New Session</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MODEL = "claude-sonnet-4-20250514";
+const TOPICS = ["Daily Life","Travel","Business","Food","Technology","Culture"];
+const LEVELS = ["Beginner","Intermediate","Advanced"];
+
+let history = [], topic = "Daily Life", level = "Intermediate";
+let turns = 0, corrections = 0, busy = false;
+let recognition = null, isRecording = false;
+let synth = window.speechSynthesis;
+
+// preload voices
+if (synth) { synth.getVoices(); if ('onvoiceschanged' in synth) synth.onvoiceschanged = () => synth.getVoices(); }
+
+function setStatus(txt, cls) {
+  const el = document.getElementById('status');
+  el.textContent = txt;
+  el.className = 'status-text' + (cls ? ' '+cls : '');
+}
+
+function setRecording(on) {
+  isRecording = on;
+  const btn = document.getElementById('mic-btn');
+  const outer = document.getElementById('mic-outer');
+  btn.classList.toggle('rec', on);
+  outer.classList.toggle('recording', on);
+  document.getElementById('icon-mic').style.display = on ? 'none' : 'block';
+  document.getElementById('icon-stop').style.display = on ? 'block' : 'none';
+}
+
+// Touch handler — fires before click on mobile
+let touchHandled = false;
+function onMicTouch(e) {
+  e.preventDefault(); // prevents ghost click
+  touchHandled = true;
+  handleMicToggle();
+  setTimeout(() => { touchHandled = false; }, 400);
+}
+function onMicClick() {
+  if (touchHandled) return; // already handled by touch
+  handleMicToggle();
+}
+
+function handleMicToggle() {
+  if (busy) return;
+  if (isRecording) { stopRec(true); return; }
+  startRec();
+}
+
+function startRec() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    alert('Speech recognition requires Chrome or Safari browser.');
+    return;
+  }
+  synth.cancel();
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  recognition.onstart = () => {
+    setRecording(true);
+    setStatus('Listening…', 'listening');
+    document.getElementById('transcript').textContent = '';
+  };
+  recognition.onresult = e => {
+    const t = Array.from(e.results).map(r => r[0].transcript).join('');
+    document.getElementById('transcript').textContent = t;
+    if (e.results[e.results.length-1].isFinal) {
+      const final = t.trim();
+      stopRec(false);
+      if (final) sendToAI(final);
+    }
+  };
+  recognition.onerror = () => stopRec(false);
+  recognition.onend   = () => { if (isRecording) stopRec(false); };
+
+  try { recognition.start(); }
+  catch(e) { setStatus('Tap to speak'); }
+}
+
+function stopRec(manual) {
+  try { recognition?.stop(); } catch(e) {}
+  setRecording(false);
+  if (manual) {
+    const t = document.getElementById('transcript').textContent.trim();
+    document.getElementById('transcript').textContent = '';
+    if (t) sendToAI(t);
+    else setStatus('Tap to speak');
+  }
+}
+
+// ── Claude ──
+function sysPrompt() {
+  return `You are a friendly English speaking coach. Have a short spoken conversation about "${topic}" with a ${level}-level learner.
+
+- Reply in 1-3 short spoken sentences only
+- Gently correct at most ONE error per turn
+- Always end with a question
+
+Respond ONLY as valid JSON, no markdown:
+{"reply":"...","hasCorrection":true,"correction":{"original":"...","fixed":"...","why":"..."},"scores":{"grammar":80,"vocab":75,"fluency":70}}
+or if no correction:
+{"reply":"...","hasCorrection":false,"correction":null,"scores":{"grammar":85,"vocab":80,"fluency":75}}`;
+}
+
+function feedSys() {
+  const msgs = history.filter(m=>m.role==='user').map(m=>m.content).join('\n');
+  return `Analyze this English practice. User said:\n${msgs}\n\nTurns:${turns} Corrections:${corrections} Level:${level}\n\nValid JSON only:\n{"grammar":80,"vocab":75,"fluency":70,"summary":"2 sentences","strengths":["...","..."],"improve":["..."],"next":["...","..."]}`;
+}
+
+async function callClaude(messages, system) {
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ model:MODEL, max_tokens:500, system, messages })
+  });
+  const d = await r.json();
+  return d.content[0].text;
+}
+
+function parseJ(t) {
+  try { return JSON.parse(t.replace(/```json|```/g,'').trim()); } catch { return null; }
+}
+
+// ── UI helpers ──
+function addMsg(cls, html) {
+  const el = document.createElement('div');
+  el.className = 'msg ' + cls;
+  el.innerHTML = html;
+  document.getElementById('chat').appendChild(el);
+  el.scrollIntoView({behavior:'smooth', block:'end'});
+  return el;
+}
+
+function addTyping() {
+  const el = document.createElement('div');
+  el.className = 'typing'; el.id = 'typing';
+  el.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  document.getElementById('chat').appendChild(el);
+  el.scrollIntoView({behavior:'smooth', block:'end'});
+}
+function removeTyping() { document.getElementById('typing')?.remove(); }
+
+function speak(text) {
+  if (!synth) return;
+  synth.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'en-US';
+  utt.rate = level === 'Beginner' ? 0.84 : level === 'Advanced' ? 1.05 : 0.95;
+  const voices = synth.getVoices();
+  const v = voices.find(v => v.name.includes('Samantha'))
+         || voices.find(v => v.lang === 'en-US')
+         || voices.find(v => v.lang.startsWith('en'));
+  if (v) utt.voice = v;
+  utt.onend = () => setStatus('Tap to speak');
+  synth.speak(utt);
+  setTimeout(() => { if (synth.speaking) {} else setStatus('Tap to speak'); }, 5000);
+}
+
+async function sendToAI(text) {
+  busy = true;
+  setStatus('Thinking…', 'thinking');
+  document.getElementById('transcript').textContent = '';
+
+  addMsg('you', text);
+  history.push({role:'user', content:text});
+  turns++;
+  addTyping();
+
+  try {
+    const raw = await callClaude(history, sysPrompt());
+    const p = parseJ(raw);
+    removeTyping();
+    if (p) {
+      addMsg('ai', p.reply);
+      history.push({role:'assistant', content:p.reply});
+      if (p.hasCorrection && p.correction) {
+        corrections++;
+        const c = p.correction;
+        const el = document.createElement('div');
+        el.className = 'msg correction';
+        el.innerHTML = `<div class="corr-label">💡 Correction</div><div class="corr-old">✗ ${c.original}</div><div class="corr-new">✓ ${c.fixed}</div><div class="corr-why">${c.why}</div>`;
+        document.getElementById('chat').appendChild(el);
+        el.scrollIntoView({behavior:'smooth', block:'end'});
+      }
+      setStatus('Speaking…', 'thinking');
+      speak(p.reply);
+    } else {
+      addMsg('ai', "Sorry, I didn't catch that. Could you try again?");
+      setStatus('Tap to speak');
+    }
+  } catch(e) {
+    removeTyping();
+    addMsg('ai', "Connection issue — please try again.");
+    setStatus('Tap to speak');
+  }
+  busy = false;
+}
+
+// ── Feedback ──
+async function endSession() {
+  if (turns === 0) { alert('Have a conversation first 😊'); return; }
+  synth.cancel();
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('sheet-sum').textContent = 'Generating feedback…';
+  document.getElementById('sheet-body').innerHTML = '';
+  ['sc-g','sc-v','sc-f'].forEach(id => document.getElementById(id).textContent = '…');
+  try {
+    const raw = await callClaude([{role:'user',content:'Feedback please.'}], feedSys());
+    const fb = parseJ(raw);
+    if (fb) {
+      document.getElementById('sc-g').textContent = fb.grammar;
+      document.getElementById('sc-v').textContent = fb.vocab;
+      document.getElementById('sc-f').textContent = fb.fluency;
+      document.getElementById('sheet-sum').textContent = fb.summary;
+      let html = '';
+      const sec = (title, items, color) => {
+        if (!items?.length) return '';
+        return `<div><div class="sec-title">${title}</div>${items.map(s=>`<div class="fb"><div class="fbd" style="background:${color}"></div><div>${s}</div></div>`).join('')}</div>`;
+      };
+      html += sec('✨ Strengths', fb.strengths, '#16a34a');
+      html += sec('🔧 To improve', fb.improve, '#d97706');
+      html += sec('🚀 Next steps', fb.next, '#2563eb');
+      document.getElementById('sheet-body').innerHTML = html;
+    }
+  } catch(e) {
+    document.getElementById('sheet-sum').textContent = 'Could not load feedback. Try again.';
+  }
+}
+
+function closeModal() { document.getElementById('overlay').classList.remove('on'); }
+
+function newSession() {
+  closeModal(); synth.cancel();
+  history = []; turns = 0; corrections = 0;
+  document.getElementById('chat').innerHTML = '';
+  init();
+}
+
+function cycleLevel() { level = LEVELS[(LEVELS.indexOf(level)+1)%LEVELS.length]; document.getElementById('chip-level').textContent = level; }
+function cycleTopic() { topic = TOPICS[(TOPICS.indexOf(topic)+1)%TOPICS.length]; document.getElementById('chip-topic').textContent = topic; }
+
+// ── Init ──
+async function init() {
+  busy = true; setStatus('Loading…', 'thinking'); addTyping();
+  try {
+    const raw = await callClaude(
+      [{role:'user', content:`Greet me and ask ONE simple question about "${topic}". Short & spoken. JSON only: {"reply":"...","hasCorrection":false,"correction":null,"scores":null}`}],
+      sysPrompt()
+    );
+    const p = parseJ(raw);
+    removeTyping();
+    const msg = p?.reply || `Hi! Let's practice English. What's on your mind today?`;
+    addMsg('ai', msg);
+    if (p?.reply) history.push({role:'assistant', content:p.reply});
+    setStatus('Speaking…', 'thinking');
+    speak(msg);
+  } catch(e) {
+    removeTyping();
+    const msg = "Hi! Let's practice English together. Tap the button and start speaking!";
+    addMsg('ai', msg);
+    speak(msg);
+    setTimeout(() => setStatus('Tap to speak'), 3000);
+  }
+  busy = false;
+}
+
+init();
+</script>
+</body>
+</html>
