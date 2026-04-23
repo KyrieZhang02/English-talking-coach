@@ -1,9 +1,4 @@
-export interface ApiResponse<T> {
+export interface ApiResponse<T = unknown> {
   data: T
-  error?: string
-}
-
-export interface HealthResponse {
-  status: string
-  timestamp: string
+  message?: string
 }
